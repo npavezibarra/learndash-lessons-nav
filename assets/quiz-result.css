@@ -1,0 +1,75 @@
+.learndash-wrapper .wpProQuiz_graded_points, .learndash-wrapper .wpProQuiz_points {
+    align-items: center;
+    background-color: #f9f9f9 !important;
+    border: 0px !important;
+    border-radius: 0;
+    color: #728188;
+    justify-content: center;
+    margin: 1em 0;
+    padding: 1em;
+}
+
+.single-sfwd-quiz .ld-quiz-status {
+    display: none !important;
+}
+
+.single-sfwd-quiz h4.wpProQuiz_header {
+    text-align: center !important;
+}
+
+.single-sfwd-quiz .wp-block-post-author-name {
+    display: none !important;
+}
+
+.single-sfwd-quiz p.has-small-font-size.has-contrast-2-color.has-text-color {
+    display: none !important;
+}
+
+.single-sfwd-quiz p.has-contrast-2-color.has-text-color {
+    display: none !important;
+}
+
+.wpProQuiz_results p {
+    text-align: center !important;
+}
+
+
+main > div > div > h1 {
+    text-align: center !important;
+}
+
+main > div > div > div > div > div > div {
+    margin: auto !important;
+}
+
+/*  MENSAJE INICIO QUIZ */
+
+.custom-quiz-message {
+    padding: 20px;
+    background-color: #f9f9f9;
+    margin-bottom: 20px;
+    font-size: 16px;
+    line-height: 1.5;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.custom-quiz-message p {
+    margin: 0;
+}
+
+/* MENSAJE AGREGAR AL RANKING */
+.learndash-wrapper .wpProQuiz_content .wpProQuiz_addToplist {
+    background-color: #00a2e81a;
+    border: 1px solid #00a2e8;
+    margin-top: 10px;
+    padding: 10px;
+    text-align: center;
+}
+
+input.wpProQuiz_button2 {
+    margin: auto !important;
+}
+
+
+
