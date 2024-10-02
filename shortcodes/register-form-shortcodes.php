@@ -59,6 +59,8 @@ function registro_o_login_shortcode( $atts ) {
     $formulario .= '<div id="form-login" style="display:none;">';
     $formulario .= '<h3>Iniciar sesión</h3>';
     $formulario .= '<p>¿No tienes cuenta? <a href="#" id="toggle-register" style="color:#d9534f;">Regístrate aquí</a></p>';
+
+    // Add the login form
     $formulario .= wp_login_form( array(
         'echo' => false, 
         'redirect' => get_permalink(), 
@@ -67,13 +69,18 @@ function registro_o_login_shortcode( $atts ) {
         'label_remember' => 'Recordarme',
         'label_log_in'   => 'Iniciar sesión',
     )); 
-    $formulario .= '</div>';
 
+    // Add the "Olvidé mi clave" link right below the password field
+    $formulario .= '<p><a href="' . esc_url( wp_lostpassword_url() ) . '" style="color:#d9534f;">Olvidé mi clave</a></p>';
+
+    $formulario .= '</div>';
     $formulario .= '</div>';
 
     return $formulario;
 }
 add_shortcode( 'registro_o_login', 'registro_o_login_shortcode' );
+
+
 
 // Función para procesar el registro del usuario
 function personalizar_registro() {
@@ -185,3 +192,4 @@ function confirmar_usuario() {
     }
 }
 add_action( 'init', 'confirmar_usuario' );
+
