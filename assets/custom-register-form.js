@@ -21,74 +21,47 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Username availability check
-    const userInput = document.getElementById("reg_user_login");
-    if (userInput) {
-        const feedback = document.createElement("p"); // Create feedback element
-        feedback.style.color = "red";
-        userInput.parentNode.appendChild(feedback);
+    // Handle the registration form submission with AJAX
+    const registerForm = document.getElementById("registerform");
+    if (registerForm) {
+        registerForm.addEventListener("submit", function(event) {
+            event.preventDefault();
 
-        userInput.addEventListener("input", function() {
-            const username = userInput.value.toLowerCase().trim(); // Trim and convert to lowercase
+            // Validate email before submitting
+            const emailField = document.getElementById("user_email").value;
+            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 
-            if (username.length > 0) {
-                // Make the AJAX call to check username availability
-                fetch(ajaxurl, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded"
-                    },
-                    body: `action=check_username&username=${username}`
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.exists) {
-                        feedback.innerText = "Este nombre de usuario ya está en uso.";
-                        feedback.style.color = "red";
-                    } else {
-                        feedback.innerText = "Este nombre de usuario está disponible.";
-                        feedback.style.color = "green";
-                    }
-                })
-                .catch(() => {
-                    feedback.innerText = "Error al verificar el nombre de usuario.";
-                    feedback.style.color = "red";
-                });
-            } else {
-                feedback.innerText = ""; // Clear feedback if input is empty
+            if (!emailPattern.test(emailField)) {
+                alert("Por favor ingresa un email válido.");
+                return; // Stop execution if email is invalid
             }
+
+            const formData = new FormData(this);
+
+            fetch(ajaxurl, {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById("registerform").style.display = "none";
+                    const successMessage = document.createElement("div");
+                    successMessage.innerHTML = data.data.message; // Display success message as HTML
+                    document.querySelector(".registro-o-login").appendChild(successMessage);
+                } else {
+                    const errorMessage = document.createElement("p");
+                    errorMessage.style.color = "red";
+                    errorMessage.innerText = data.data.message || "Hubo un error al intentar registrarte.";
+                    document.querySelector(".registro-o-login").appendChild(errorMessage);
+                }
+            })
+            .catch(() => {
+                const errorMessage = document.createElement("p");
+                errorMessage.style.color = "red";
+                errorMessage.innerText = "Error en la solicitud. Inténtalo de nuevo.";
+                document.querySelector(".registro-o-login").appendChild(errorMessage);
+            });
         });
     }
-});
-
-// Handle the registration form submission with AJAX
-document.getElementById("registerform").addEventListener("submit", function(event) {
-    event.preventDefault();
-    const formData = new FormData(this);
-
-    fetch(ajaxurl, {
-        method: "POST",
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            document.getElementById("registerform").style.display = "none";
-            const successMessage = document.createElement("p");
-            successMessage.style.color = "green";
-            successMessage.innerText = data.data.message;
-            document.querySelector(".registro-o-login").appendChild(successMessage);
-        } else {
-            const errorMessage = document.createElement("p");
-            errorMessage.style.color = "red";
-            errorMessage.innerText = data.data.message || "Hubo un error al intentar registrarte.";
-            document.querySelector(".registro-o-login").appendChild(errorMessage);
-        }
-    })
-    .catch(() => {
-        const errorMessage = document.createElement("p");
-        errorMessage.style.color = "red";
-        errorMessage.innerText = "Error en la solicitud. Inténtalo de nuevo.";
-        document.querySelector(".registro-o-login").appendChild(errorMessage);
-    });
 });

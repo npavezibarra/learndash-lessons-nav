@@ -34,7 +34,6 @@
     width: 100%;  /* Asegura que ocupen el 100% del contenedor */
     max-width: 300px;  /* Limita el ancho máximo de los inputs */
     padding: 10px;
-    margin-bottom: 20px;
     border-radius: 5px;
     border: 1px solid #ccc;
     font-size: 1.1em;
@@ -48,7 +47,6 @@
 
 /* Estilos para los botones */
 .registro-o-login input[type="submit"] {
-    background-color: #000;
     color: #fff;
     border: none;
     padding: 10px 20px;
@@ -60,7 +58,7 @@
 }
 
 .registro-o-login input[type="submit"]:hover {
-    background-color: #333;
+    font-family: 'Roboto', sans-serif; 
 }
 
 /* Estilo para centrar el formulario */
@@ -68,6 +66,7 @@ form#registerform,
 .login form {
     max-width: 300px;  /* Asegura que el ancho máximo sea consistente */
     margin: auto;
+    font-family: 'Roboto', sans-serif; 
 }
 
 .submit {
@@ -79,26 +78,76 @@ p.login-username {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    font-family: 'Roboto', sans-serif; 
 }
 
 input#user_login {
     margin: auto;
+    font-family: 'Roboto', sans-serif; 
 }
 
 p.login-password {
     display: flex;
     flex-direction: column;
+    font-family: 'Roboto', sans-serif; 
 }
 
 input#user_pass {
     margin: auto;
+    font-family: 'Roboto', sans-serif; 
 }
 
 
 input#user_email {
     margin-bottom: 0px !important;
+    font-family: 'Roboto', sans-serif; 
 }
 
 p.submit {
     margin-top: 40px;
+    font-family: 'Roboto', sans-serif; 
+}
+
+input#wp-submit {
+    font-size: 14px;
+    font-family: 'Roboto', sans-serif; 
+}
+
+/* BUTTON GUMROAD */
+
+/* Inspired by Gumroad website */
+.button {
+    --bg: #000;
+    --hover-bg: #d9534f;
+    --hover-text: #000;
+    color: #fff;
+    cursor: pointer;
+    border: 1px solid var(--bg);
+    border-radius: 4px;
+    padding: 0.8em 2em;
+    background: var(--bg);
+    transition: 0.2s;
+  }
+  
+  .button:hover {
+    color: var(--hover-text);
+    transform: translate(-0.25rem, -0.25rem);
+    background: var(--hover-bg);
+    box-shadow: 0.25rem 0.25rem var(--bg);
+  }
+  
+  .button:active {
+    transform: translate(0);
+    box-shadow: none;
+  }
+  
+
+  p.success-message {
+    font-size: 28px;
+    padding: 32px;
+    line-height: 1.1;
+}
+
+form label {
+    font-size:12px;
 }

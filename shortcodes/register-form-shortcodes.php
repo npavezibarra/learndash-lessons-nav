@@ -25,21 +25,32 @@ function registro_o_login_shortcode( $atts ) {
     $formulario .= '<form name="registerform" id="registerform" action="' . esc_url( admin_url('admin-ajax.php') ) . '" method="post" novalidate="novalidate">';
     $formulario .= '<input type="hidden" name="action" value="register_user">';
     $formulario .= '<input type="hidden" name="quiz_id" value="' . esc_attr( $atts['quiz_id'] ) . '">'; 
+
+    // Nombre y Apellido
     $formulario .= '<p>';
-    $formulario .= '<label for="user_login">Nombre de usuario<br />';
-    $formulario .= '<input type="text" name="user_login" id="user_login" class="input" value="" size="20" autocapitalize="off" required /></label>';
+    $formulario .= '<label for="first_name">Nombre<br />';
+    $formulario .= '<input type="text" name="first_name" id="first_name" class="input" value="" size="20" required /></label>';
     $formulario .= '</p>';
+    $formulario .= '<p>';
+    $formulario .= '<label for="last_name">Apellido<br />';
+    $formulario .= '<input type="text" name="last_name" id="last_name" class="input" value="" size="20" required /></label>';
+    $formulario .= '</p>';
+
+    // Email
     $formulario .= '<p>';
     $formulario .= '<label for="user_email">Email<br />';
     $formulario .= '<input type="email" name="user_email" id="user_email" class="input" value="" size="25" required /></label>';
     $formulario .= '</p>';
+    
+    // Clave
     $formulario .= '<p>';
     $formulario .= '<label for="user_pass">Clave<br />';
     $formulario .= '<input type="password" name="user_pass" id="user_pass" class="input" value="" size="25" required /></label>';
     $formulario .= '</p>';
+    
     $formulario .= '<input type="hidden" name="redirect_to" value="' . esc_url( get_permalink() ) . '" />';
     $formulario .= '<p class="submit">';
-    $formulario .= '<input type="submit" name="wp-submit" id="wp-submit" class="button button-primary button-large" value="Registrarse" />';
+    $formulario .= '<input type="submit" name="wp-submit" id="wp-submit" class="button button-primary button-large" value="Registrarme" />';
     $formulario .= '</p>';
     $formulario .= '</form>';
     $formulario .= '</div>';
@@ -64,43 +75,67 @@ function registro_o_login_shortcode( $atts ) {
 }
 add_shortcode( 'registro_o_login', 'registro_o_login_shortcode' );
 
-
 // Función para procesar el registro del usuario
 function personalizar_registro() {
-    $sanitized_user_login = sanitize_text_field( $_POST['reg_user_login'] );
-    $user_email = sanitize_email( $_POST['reg_user_email'] );
-    $quiz_id = isset( $_POST['quiz_id'] ) ? intval( $_POST['quiz_id'] ) : 0; // Obtiene el quiz_id del formulario
+    // Obtener los campos enviados
+    $first_name = sanitize_text_field( $_POST['first_name'] );
+    $last_name = sanitize_text_field( $_POST['last_name'] );
+    $user_email = sanitize_email( $_POST['user_email'] );
+    $quiz_id = isset( $_POST['quiz_id'] ) ? intval( $_POST['quiz_id'] ) : 0; 
 
+    // Validar que el email tenga el formato correcto
+    if ( !is_email( $user_email ) ) {
+        wp_send_json_error( array( 'message' => 'Por favor, introduce una dirección de correo válida.' ) );
+        return;
+    }
+
+    // Comprobar si el email ya está registrado
+    if ( email_exists( $user_email ) ) {
+        wp_send_json_error( array( 'message' => 'Este correo ya está registrado.' ) );
+        return;
+    }
+
+    // Combinar Nombre y Apellido para generar el nombre de usuario
+    $sanitized_user_login = strtolower( $first_name . '.' . $last_name );
+
+    // Si ya existe el nombre de usuario, añadir un número aleatorio
+    while ( username_exists( $sanitized_user_login ) ) {
+        $sanitized_user_login .= rand( 1, 100 );
+    }
+
+    // Procesar la contraseña
     if ( isset( $_POST['user_pass'] ) ) {
         $password = $_POST['user_pass'];
 
-        // Valida la contraseña (mínimo 8 caracteres)
+        // Validar que la contraseña tenga al menos 8 caracteres
         if ( strlen( $password ) < 8 ) {
             wp_send_json_error( array( 'message' => 'La contraseña debe tener al menos 8 caracteres.' ) );
             return;
         }
 
-        // Genera una clave de confirmación única
+        // Generar clave de confirmación
         $key = wp_generate_password( 20, false );
 
-        // Almacena temporalmente los datos del usuario
+        // Almacenar los datos del usuario temporalmente
         $user_data = array(
             'user_login' => $sanitized_user_login,
             'user_pass'  => $password,
             'user_email' => $user_email,
+            'first_name' => $first_name,
+            'last_name'  => $last_name,
             'confirm_key' => $key, 
         );
         set_transient( 'temp_user_' . $key, $user_data, DAY_IN_SECONDS );
 
-        // Enviar el email de confirmación
+        // Enviar email de confirmación
         $to = $user_email;
         $subject = 'Confirma tu cuenta';
-        $message = 'Por favor, haz clic en el siguiente enlace para confirmar tu cuenta: ' . "\r\n\r\n";
-        $message .= home_url( '/?confirm_user=' . $key . '&quiz_id=' . $quiz_id ); // Añade el quiz_id al enlace de confirmación
+        $message = 'Haz clic en el enlace para confirmar tu cuenta: ' . home_url( '/?confirm_user=' . $key . '&quiz_id=' . $quiz_id );
         wp_mail( $to, $subject, $message );
 
-        // Devuelve un mensaje de éxito al frontend
-        wp_send_json_success( array( 'message' => 'Revisa tu correo para confirmar tu cuenta.' ) );
+        // Mensaje de éxito con HTML sin escapar
+        wp_send_json_success( array( 'message' => '<p class="success-message">Revisa tu correo para confirmar tu cuenta.<p>Haz click en el link <br>y serás redirigido a la evaluación.</p></p>' ) );
+
     }
 }
 add_action( 'wp_ajax_nopriv_register_user', 'personalizar_registro' );
@@ -113,42 +148,40 @@ function confirmar_usuario() {
         $user_data = get_transient( 'temp_user_' . $key );
 
         if ( $user_data ) {
-            // Crea el usuario
-            $user_id = wp_create_user( $user_data['user_login'], $user_data['user_pass'], $user_data['user_email'] );
+            // Crear el usuario
+            $user_id = wp_create_user( $user_data['user_login'], $user_data['user_pass'], $user_data['user_email'], '', array(
+                'first_name' => $user_data['first_name'],
+                'last_name' => $user_data['last_name'],
+            ));
 
             if ( ! is_wp_error( $user_id ) ) {
-                // Elimina los datos temporales del usuario
+                // Eliminar los datos temporales del usuario
                 delete_transient( 'temp_user_' . $key );
 
-                // Inicia sesión automáticamente al usuario
+                // Iniciar sesión automáticamente al usuario
                 wp_set_current_user( $user_id, $user_data['user_login'] );
                 wp_set_auth_cookie( $user_id );
                 do_action( 'wp_login', $user_data['user_login'] );
 
                 // Verifica si hay un quiz_id en la URL
-                if ( isset( $_GET['quiz_id'] ) ) {
+                if ( isset( $_GET['quiz_id'] ) && intval( $_GET['quiz_id'] ) > 0 ) {
                     $quiz_id = intval( $_GET['quiz_id'] );
-                    $quiz_url = get_permalink( $quiz_id ); // Obtiene la URL del quiz de LearnDash
-                    wp_redirect( $quiz_url );
-                    exit;
+                    $quiz_url = get_permalink( $quiz_id ); // Obtener la URL del quiz de LearnDash
+                    if ( $quiz_url ) {
+                        wp_redirect( $quiz_url ); // Redirigir al quiz
+                        exit;
+                    }
                 }
 
-                // Redirección por defecto si no hay quiz_id
+                // Redirección por defecto si no hay quiz_id o si el quiz no existe
                 wp_redirect( home_url() );
                 exit;
             } else {
                 wp_die( 'Error al crear la cuenta de usuario.' );
             }
         } else {
-            wp_die( 'Enlace de confirmación inválido.' );
+            wp_die( 'Enlace de confirmación inválido o ha expirado.' );
         }
     }
 }
 add_action( 'init', 'confirmar_usuario' );
-
-
-
-
-
-
-
