@@ -151,3 +151,8 @@ input#wp-submit {
 form label {
     font-size:12px;
 }
+
+main {
+    background: url(http://localhost:8888/LearnDash/wp-content/uploads/2024/10/Rome2.jpg);
+    padding: 40px;
+}

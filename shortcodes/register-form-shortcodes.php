@@ -21,7 +21,7 @@ function registro_o_login_shortcode( $atts ) {
 
     $formulario .= '<div id="form-registro">';
     $formulario .= '<h3>Regístrate</h3>';
-    $formulario .= '<p>o si ya eres miembro <a href="#" id="toggle-login" style="color:red;">haz login</a></p>';
+    $formulario .= '<p>o si ya eres miembro <a href="#" id="toggle-login" style="color:#d9534f;">haz login</a></p>';
     $formulario .= '<form name="registerform" id="registerform" action="' . esc_url( admin_url('admin-ajax.php') ) . '" method="post" novalidate="novalidate">';
     $formulario .= '<input type="hidden" name="action" value="register_user">';
     $formulario .= '<input type="hidden" name="quiz_id" value="' . esc_attr( $atts['quiz_id'] ) . '">'; 
@@ -58,7 +58,7 @@ function registro_o_login_shortcode( $atts ) {
     // Formulario de login (oculto por defecto)
     $formulario .= '<div id="form-login" style="display:none;">';
     $formulario .= '<h3>Iniciar sesión</h3>';
-    $formulario .= '<p>¿No tienes cuenta? <a href="#" id="toggle-register" style="color:red;">Regístrate aquí</a></p>';
+    $formulario .= '<p>¿No tienes cuenta? <a href="#" id="toggle-register" style="color:#d9534f;">Regístrate aquí</a></p>';
     $formulario .= wp_login_form( array(
         'echo' => false, 
         'redirect' => get_permalink(), 
