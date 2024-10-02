@@ -77,4 +77,6 @@ function custom_quiz_result_template($filepath, $name, $args, $echo, $return_fil
 
 /* REQUERIDOS */
 
-require_once( plugin_dir_path( __FILE__ ) . 'shortcodes.php' );
+require_once( plugin_dir_path( __FILE__ ) . '/shortcodes/register-form-shortcodes.php' );
+
+
