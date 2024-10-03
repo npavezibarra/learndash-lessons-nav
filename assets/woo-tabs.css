@@ -1,0 +1,12 @@
+.curso-imagen {
+    max-width: 200px !important;
+}
+
+.card__progress > p {
+    margin-top: 0px;
+    font-size:12px;
+}
+
+img.attachment-medium.size-medium.wp-post-image {
+    border-radius: 6px;
+}

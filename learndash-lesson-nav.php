@@ -19,6 +19,9 @@ function enqueue_quiz_resources() {
     wp_enqueue_style('quiz-result-style', $plugin_url . 'assets/quiz-result.css', array(), '1.0.0', 'all');
     wp_enqueue_style('custom-left-div-style', $plugin_url . 'assets/custom-left-div.css', array(), '1.0.0', 'all');
 
+    // Enqueue woo-tabs CSS for WooCommerce My Account tabs
+    wp_enqueue_style('woo-tabs-style', $plugin_url . 'assets/woo-tabs.css', array(), '1.0.0', 'all');
+
     // Check if it's a quiz page
     if (is_singular('sfwd-quiz')) {
         // Enqueue the custom JS for quiz message
